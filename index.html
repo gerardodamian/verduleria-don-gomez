@@ -34,15 +34,18 @@ button{cursor:pointer;border:0;background:none}
 .search{flex:1;min-width:0;border:2px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px}
 .search:focus{border-color:var(--g2);outline:0}
 .ibtn{background:var(--g);color:#fff;border-radius:999px;padding:10px 14px;font-weight:800;font-size:.85rem;white-space:nowrap}
+.carthead{position:relative;min-width:44px;padding:10px 13px}
+.carthead span{margin-left:4px}
 .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
 .chip{flex:0 0 auto;border-radius:999px;padding:7px 15px;background:#fff;border:1.5px solid var(--line);font-weight:600;font-size:.9rem}
 .chip[aria-pressed=true]{background:var(--g);border-color:var(--g);color:#fff}
 main{max-width:1100px;margin:auto;padding:8px 16px}
 h2{font-family:var(--serif);color:var(--g);font-size:1.35rem;margin:22px 0 12px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
 .card{background:var(--card);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);position:relative}
 .card.in{border-color:var(--g2);box-shadow:0 0 0 2px var(--g2) inset}
-.tile{height:92px;border-radius:14px;display:grid;place-items:center;font-size:3.2rem;background:var(--t,#dff1d8)}
+.tile{height:150px;border-radius:14px;display:grid;place-items:center;font-size:3.2rem;background:var(--t,#dff1d8);overflow:hidden}
+.tile img{width:100%;height:100%;object-fit:contain;padding:6px}
 .card h3{font-family:var(--serif);font-size:1.08rem;color:var(--g);line-height:1.2}
 .card p{font-size:.85rem;color:var(--mut);flex:1}
 .opts{display:flex;gap:6px;flex-wrap:wrap}
@@ -58,7 +61,7 @@ h2{font-family:var(--serif);color:var(--g);font-size:1.35rem;margin:22px 0 12px}
 .step output{min-width:52px;text-align:center;font-weight:800;font-size:.9rem}
 .empty{text-align:center;color:var(--mut);padding:40px 0}
 .cartbar{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:6;pointer-events:none;display:flex;justify-content:center}
-.cartbar button{pointer-events:auto;width:100%;max-width:520px;background:var(--rd);color:#fff;border-radius:16px;padding:14px 18px;display:flex;justify-content:space-between;font-weight:800;box-shadow:0 8px 24px rgba(1,79,50,.35)}
+.cartbar button{pointer-events:auto;width:100%;max-width:520px;background:var(--g);color:#fff;border-radius:16px;padding:14px 18px;display:flex;justify-content:space-between;font-weight:800;box-shadow:0 8px 24px rgba(1,79,50,.25)}
 .cartbar[hidden]{display:none}
 dialog{border:0;padding:0;background:var(--bg);color:var(--ink);width:100%;max-width:520px;max-height:92vh;margin:auto auto 0;border-radius:24px 24px 0 0;overflow:auto}
 dialog::backdrop{background:rgba(1,30,19,.55)}
@@ -87,6 +90,17 @@ label.f{display:grid;gap:4px;font-weight:600;font-size:.9rem}
 .wa{background:#1fa855;color:#fff;border-radius:16px;padding:15px;font-weight:800;font-size:1.05rem;width:100%;box-shadow:0 2px 0 #137a3c}
 .ghost{color:var(--rd);font-weight:700;font-size:.85rem;justify-self:center}
 .note{font-size:.8rem;color:var(--mut)}
+.admin{max-width:620px;border-radius:18px;margin:auto}
+.admin .db{max-height:78vh;overflow:auto}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-grid .wide{grid-column:1/-1}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+.admin-auth{padding:16px 18px 22px;display:grid;gap:12px}
+#adminAuth[hidden],#adminForm[hidden],#loginForm[hidden]{display:none}
+.admin-actions button{flex:1}
+.danger{color:#9b2c20;border:1px solid #e8c4bf;background:#fff;border-radius:12px;padding:10px;font-weight:800}
+.admin-trigger{cursor:pointer;color:var(--g);font:inherit;text-align:left}
+@media(max-width:420px){.admin-grid{grid-template-columns:1fr}.admin-grid .wide{grid-column:auto}.row{gap:6px}.ibtn{padding:9px 10px}.search{padding:9px 12px}}
 .err{color:var(--rd);font-weight:700;font-size:.9rem;min-height:1.2em}
 #qrbox{background:#fff;border-radius:16px;padding:12px;width:min(260px,100%);margin:auto}
 #qrbox svg{width:100%;height:auto;display:block}
@@ -104,18 +118,21 @@ footer{text-align:center;color:var(--mut);font-size:.82rem;padding:24px 16px}
   <a href="tel:+543548433620"><b>3548 43-3620</b><span>Llamanos o escribinos</span></a>
   <div><b>Delivery La Falda</b><span id="i1"></span></div>
   <div><b>Delivery Valle Hermoso</b><span id="i2"></span></div>
+  <div><b>Atención</b><span id="hoursInfo"></span></div>
+  <button class="admin-trigger" id="adminBtn"><b>⚙ Administrar</b><span>Productos y precios</span></button>
 </section>
 
 <div class="bar"><div>
   <div class="row">
     <input class="search" id="q" type="search" placeholder="Buscar: tomate, huevos, palta…" aria-label="Buscar productos" autocomplete="off">
-    <button class="ibtn" id="qrBtn" aria-label="Instalar app y código QR">📲 App / QR</button>
+    <button class="ibtn carthead" id="cartHead" aria-label="Ver carrito">🛒 <span id="cartHeadN">0</span></button>
+    <button class="ibtn" id="qrBtn" aria-label="Instalar app y código QR">📲 QR</button>
   </div>
   <div class="chips" id="chips" role="group" aria-label="Categorías"></div>
 </div></div>
 
 <main id="main"></main>
-<footer>Don Gomez · Av. España 580, La Falda · WhatsApp 3548 43-3620<br>Los productos por kilo se pesan al armar el pedido: el total final puede variar levemente.</footer>
+<footer>Don Gomez · Av. España 580, La Falda · WhatsApp 3548 43-3620<br><span id="deliveryInfo">Pedidos antes de las 11 hs: entrega al mediodía. Después de las 11 hs: entrega por la tarde.</span><br>Los productos por kilo se pesan al armar el pedido: el total final puede variar levemente.</footer>
 
 <div class="cartbar" id="cartbar" hidden><button id="openCart"><span id="cbN"></span><span id="cbT"></span></button></div>
 <div class="toast" id="toast" role="status"></div>
@@ -149,54 +166,96 @@ footer{text-align:center;color:var(--mut);font-size:.82rem;padding:24px 16px}
   </div>
 </dialog>
 
+<dialog id="admin" class="admin" aria-labelledby="adminT">
+  <div class="dh"><h2 id="adminT">Administrar la verdulería</h2><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <section class="admin-auth" id="adminAuth" hidden>
+    <p class="note" id="authStatus"></p>
+    <form class="db" id="loginForm" style="padding:0">
+      <label class="f">PIN de administración<input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="current-password" placeholder="Ingresá el PIN" required></label>
+      <div class="err" id="authError" role="alert"></div>
+      <button class="wa" type="submit">Iniciar sesión</button>
+    </form>
+    <button class="danger" id="logoutAdmin" type="button" hidden>Cerrar sesión</button>
+  </section>
+  <form class="db" id="adminForm" hidden>
+    <label class="f">Producto a editar<select id="adminProduct"><option value="">Agregar producto nuevo</option></select></label>
+    <label class="f" id="adminOptionWrap" hidden>Presentación a editar<select id="adminOption"></select></label>
+    <div class="admin-grid">
+      <label class="f wide">Nombre<input id="adminName" required maxlength="70"></label>
+      <label class="f">Categoría<select id="adminCategory"></select></label>
+      <label class="f">Presentación<input id="adminLabel" required placeholder="Kilo, Unidad, Atado…"></label>
+      <label class="f">Se vende por<select id="adminUnit"><option value="u">Unidad / presentación</option><option value="kg">Kilo</option></select></label>
+      <label class="f">Precio ($)<input id="adminPrice" type="number" min="0" step="1" required></label>
+      <label class="f wide">Descripción<textarea id="adminDescription" rows="2" maxlength="180"></textarea></label>
+      <label class="f wide">Foto del producto<input id="adminImage" type="file" accept="image/*"><span class="note" id="imageHint">Opcional; se guarda en este dispositivo.</span></label>
+    </div>
+    <fieldset><legend>Delivery y horarios</legend>
+      <div class="admin-grid">
+        <label class="f">Delivery La Falda ($)<input id="priceLf" type="number" min="0" step="1" required></label>
+        <label class="f">Delivery Valle Hermoso ($)<input id="priceVh" type="number" min="0" step="1" required></label>
+        <label class="f wide">Horario de atención<input id="adminHours" maxlength="100" placeholder="Consultar por WhatsApp"></label>
+      </div>
+      <p class="note">Pedidos antes de las 11 hs: entrega al mediodía. Después de las 11 hs: entrega por la tarde.</p>
+    </fieldset>
+    <div class="err" id="adminErr" role="alert"></div>
+    <div class="admin-actions"><button class="wa" type="submit" id="saveProduct">Guardar producto y precios</button><button class="danger" type="button" id="deleteProduct" hidden>Eliminar producto</button></div>
+    <p class="note">Los cambios se guardan para todos los clientes.</p>
+  </form>
+</dialog>
+
 <script src="qrcode.js"></script>
 <script>
 /* ====== CONFIGURACIÓN: editá acá tus datos ====== */
-const NEGOCIO={nombre:'Don Gomez',tel:'5493548433620',dir:'Av. España 580, La Falda',
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true}catch{return false}}};
+const ADMIN_PIN='1234';
+let isStoreAdmin=false;
+const NEGOCIO={nombre:'Don Gomez',tel:'5493548433620',dir:'Av. España 580, La Falda',horarios:'Consultar por WhatsApp',
  envios:[{id:'local',t:'Retiro en el local',d:'Av. España 580, La Falda',p:0},
          {id:'lf',t:'Delivery en La Falda',d:'Te lo llevamos a domicilio',p:2500},
          {id:'vh',t:'Delivery en Valle Hermoso',d:'Te lo llevamos a domicilio',p:3000}]};
+Object.assign(NEGOCIO,store.get('dg-business',{}));
 const CATS={verduras:['Verduras','#dff1d8'],frutas:['Frutas','#ffe6c7'],hojas:['Hojas y hierbas','#d3efe2'],huevos:['Huevos','#fff0bd']};
 /* u:'kg' se vende por kilo (paso 0,5 kg) · u:'u' por unidad/atado/docena/maple. Precios de ejemplo: cambialos. */
 const kg=p=>[{l:'Kilo',p,u:'kg'}], un=(l,p)=>[{l,p,u:'u'}];
-const PRODUCTS=[
-{id:'tomate',c:'verduras',e:'🍅',n:'Tomate perita',d:'Firme y sabroso, ideal para salsas y ensaladas.',o:kg(2800)},
-{id:'papa',c:'verduras',e:'🥔',n:'Papa blanca',d:'Para hervir, freír o hacer puré.',o:kg(1200)},
-{id:'cebolla',c:'verduras',e:'🧅',n:'Cebolla',d:'Cebolla común de guarda.',o:kg(1000)},
-{id:'zanahoria',c:'verduras',e:'🥕',n:'Zanahoria',d:'Dulce y crocante, sin hojas.',o:kg(1100)},
-{id:'morron',c:'verduras',e:'🫑',n:'Morrón rojo',d:'Para rellenar, asar o ensaladas.',o:kg(4500)},
+const PRODUCTS_BASE=[
+{id:'tomate',c:'verduras',e:'🍅',img:'img/06-tomates.png',n:'Tomate perita',d:'Firme y sabroso, ideal para salsas y ensaladas.',o:kg(2800)},
+{id:'papa',c:'verduras',e:'🥔',img:'img/11-papas.png',n:'Papa blanca',d:'Para hervir, freír o hacer puré.',o:kg(1200)},
+{id:'cebolla',c:'verduras',e:'🧅',img:'img/12-cebollas.png',n:'Cebolla',d:'Cebolla común de guarda.',o:kg(1000)},
+{id:'zanahoria',c:'verduras',e:'🥕',img:'img/10-zanahorias.png',n:'Zanahoria',d:'Dulce y crocante, sin hojas.',o:kg(1100)},
+{id:'morron',c:'verduras',e:'🫑',img:'img/09-morrones.png',n:'Morrón rojo',d:'Para rellenar, asar o ensaladas.',o:kg(4500)},
 {id:'zapallito',c:'verduras',e:'🥒',n:'Zapallito verde',d:'Tierno, para rellenar o al horno.',o:kg(2200)},
 {id:'zapallo',c:'verduras',e:'🎃',n:'Zapallo anco',d:'Perfecto para puré, sopa y al horno.',o:kg(1300)},
 {id:'batata',c:'verduras',e:'🍠',n:'Batata',d:'Dulce, ideal al horno o en puré.',o:kg(1500)},
 {id:'berenjena',c:'verduras',e:'🍆',n:'Berenjena',d:'Para milanesas, escabeche o al horno.',o:kg(2400)},
 {id:'choclo',c:'verduras',e:'🌽',n:'Choclo',d:'Tierno y dulce. Precio por unidad.',o:un('Unidad',700)},
-{id:'ajo',c:'verduras',e:'🧄',n:'Ajo',d:'Cabezas grandes, muy aromáticas.',o:kg(7000)},
-{id:'manzana',c:'frutas',e:'🍎',n:'Manzana roja',d:'Crocante y jugosa.',o:kg(2300)},
-{id:'banana',c:'frutas',e:'🍌',n:'Banana',d:'En su punto justo de maduración.',o:kg(2200)},
-{id:'naranja',c:'frutas',e:'🍊',n:'Naranja de jugo',d:'Dulce y jugosa, para exprimir.',o:kg(1300)},
+{id:'ajo',c:'verduras',e:'🧄',n:'Ajo',d:'Cabezas grandes, muy aromáticas.',o:un('Unidad',700)},
+{id:'manzana',c:'frutas',e:'🍎',img:'img/03-manzanas.png',n:'Manzana roja',d:'Crocante y jugosa.',o:kg(2300)},
+{id:'banana',c:'frutas',e:'🍌',img:'img/04-bananas.png',n:'Banana',d:'En su punto justo de maduración.',o:kg(2200)},
+{id:'naranja',c:'frutas',e:'🍊',img:'img/02-naranjas.png',n:'Naranja de jugo',d:'Dulce y jugosa, para exprimir.',o:kg(1300)},
 {id:'mandarina',c:'frutas',e:'🍊',n:'Mandarina',d:'Fácil de pelar y bien dulce.',o:kg(1800)},
 {id:'limon',c:'frutas',e:'🍋',n:'Limón',d:'Mucho jugo y aroma.',o:kg(1600)},
 {id:'pera',c:'frutas',e:'🍐',n:'Pera',d:'Tierna y perfumada.',o:kg(2400)},
-{id:'frutilla',c:'frutas',e:'🍓',n:'Frutillas',d:'Rojas y dulces, para el postre.',o:kg(6500)},
+{id:'frutilla',c:'frutas',e:'🍓',img:'img/05-frutillas.png',n:'Frutillas',d:'Rojas y dulces, para el postre.',o:kg(6500)},
 {id:'uva',c:'frutas',e:'🍇',n:'Uva',d:'Racimos dulces y sin semilla.',o:kg(4800)},
 {id:'palta',c:'frutas',e:'🥑',n:'Palta',d:'Cremosa, lista para tostadas y ensaladas.',o:kg(6000)},
 {id:'kiwi',c:'frutas',e:'🥝',n:'Kiwi',d:'Ácido y refrescante, rico en vitamina C.',o:kg(4200)},
-{id:'lechuga',c:'hojas',e:'🥬',n:'Lechuga criolla',d:'Fresca, hojas tiernas. Por planta.',o:un('Planta',1200)},
+{id:'lechuga',c:'hojas',e:'🥬',img:'img/07-lechuga.png',n:'Lechuga criolla',d:'Fresca, hojas tiernas. Por planta.',o:un('Planta',1200)},
 {id:'espinaca',c:'hojas',e:'🥬',n:'Espinaca',d:'Atado grande de hojas tiernas.',o:un('Atado',1500)},
 {id:'acelga',c:'hojas',e:'🥬',n:'Acelga',d:'Atado grande, para tartas y tortillas.',o:un('Atado',1300)},
 {id:'rucula',c:'hojas',e:'🌿',n:'Rúcula',d:'Atado de hojas con sabor intenso.',o:un('Atado',1300)},
 {id:'perejil',c:'hojas',e:'🌿',n:'Perejil',d:'Atado fresco recién cortado.',o:un('Atado',600)},
 {id:'albahaca',c:'hojas',e:'🌱',n:'Albahaca',d:'Atado aromático para salsas y pesto.',o:un('Atado',900)},
-{id:'huevoB',c:'huevos',e:'🥚',n:'Huevos blancos',d:'Frescos, de granja. Elegí cómo llevarlos.',o:[{l:'Unidad',p:300,u:'u'},{l:'Docena',p:3400,u:'u'},{l:'Maple x30',p:8200,u:'u'}]},
-{id:'huevoC',c:'huevos',e:'🥚',n:'Huevos de color',d:'Yema bien anaranjada, sabor casero.',o:[{l:'Unidad',p:330,u:'u'},{l:'Docena',p:3800,u:'u'},{l:'Maple x30',p:9200,u:'u'}]}
+{id:'huevoB',c:'huevos',e:'🥚',img:'img/14-huevos-blancos.png',n:'Huevos blancos',d:'Frescos, de granja. Elegí cómo llevarlos.',o:[{l:'Unidad',p:300,u:'u'},{l:'Docena',p:3400,u:'u'},{l:'Maple x30',p:8200,u:'u'}]},
+{id:'huevoC',c:'huevos',e:'🥚',img:'img/13-huevos-de-color.png',n:'Huevos de color',d:'Yema bien anaranjada, sabor casero.',o:[{l:'Unidad',p:330,u:'u'},{l:'Docena',p:3800,u:'u'},{l:'Maple x30',p:9200,u:'u'}]}
 ];
 
 /* ====== Utilidades ====== */
+let PRODUCTS=store.get('dg-products',PRODUCTS_BASE);
 const $=s=>document.querySelector(s), money=n=>'$'+Math.round(n).toLocaleString('es-AR');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fq=(q,u)=>u==='kg'?String(q).replace('.',',')+' kg':String(q);
-const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 let cart=store.get('dg-cart',{}), sel={}, cat='todo', term='', ship=store.get('dg-ship','local');
-const key=(id,i)=>id+'|'+i, find=id=>PRODUCTS.find(p=>p.id===id);
+const key=(id,i)=>id+'|'+i, find=id=>PRODUCTS.find(p=>p.id===id), imageFor=p=>p.img||PRODUCTS_BASE.find(base=>base.id===p.id)?.img;
 const stepOf=o=>o.u==='kg'?0.5:1;
 function change(k,dir){const [id,i]=k.split('|'),o=find(id).o[i],s=stepOf(o);
   const q=Math.round(((cart[k]||0)+dir*s)*10)/10; if(q<=0)delete cart[k]; else cart[k]=q;
@@ -204,13 +263,14 @@ function change(k,dir){const [id,i]=k.split('|'),o=find(id).o[i],s=stepOf(o);
 function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
 
 /* ====== Catálogo ====== */
-$('#i1').textContent=money(NEGOCIO.envios[1].p); $('#i2').textContent=money(NEGOCIO.envios[2].p);
+function updateInfo(){$('#i1').textContent=money(NEGOCIO.envios[1].p);$('#i2').textContent=money(NEGOCIO.envios[2].p);$('#hoursInfo').textContent=NEGOCIO.horarios||'Consultar por WhatsApp'}
+updateInfo();
 function drawChips(){const all=[['todo','Todo'],...Object.entries(CATS).map(([k,v])=>[k,v[0]])];
   $('#chips').innerHTML=all.map(([k,l])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${l}</button>`).join('')}
 function card(p){const i=sel[p.id]??0,o=p.o[i],k=key(p.id,i),q=cart[k]||0,inCart=p.o.some((_,j)=>cart[key(p.id,j)]);
-  return `<article class="card${inCart?' in':''}"><div class="tile" style="--t:${CATS[p.c][1]}" aria-hidden="true">${p.e}</div>
-  <h3>${p.n}</h3><p>${p.d}</p>
-  ${p.o.length>1?`<div class="opts" role="group" aria-label="Presentación">${p.o.map((x,j)=>`<button class="opt" data-sel="${p.id}|${j}" aria-pressed="${j===i}">${x.l}</button>`).join('')}</div>`:''}
+  return `<article class="card${inCart?' in':''}"><div class="tile" style="--t:${CATS[p.c][1]}" aria-hidden="true">${imageFor(p)?`<img src="${imageFor(p)}" alt="">`:p.e}</div>
+  <h3>${esc(p.n)}</h3><p>${esc(p.d)}</p>
+  ${p.o.length>1?`<div class="opts" role="group" aria-label="Presentación">${p.o.map((x,j)=>`<button class="opt" data-sel="${p.id}|${j}" aria-pressed="${j===i}">${esc(x.l)}</button>`).join('')}</div>`:''}
   <div class="buy"><div class="price">${money(o.p)} <small>/ ${o.u==='kg'?'kg':o.l.toLowerCase()}</small></div>
   ${q?`<div class="step"><button data-dec="${k}" aria-label="Quitar uno de ${p.n}">−</button><output>${fq(q,o.u)}</output><button data-inc="${k}" aria-label="Sumar ${p.n}">+</button></div>`
      :`<button class="add" data-inc="${k}" aria-label="Agregar ${p.n}">Agregar</button>`}</div></article>`}
@@ -221,14 +281,14 @@ function draw(){const t=term.trim().toLowerCase();
     h+=`<h2>${CATS[c][0]}</h2><div class="grid">${items.map(card).join('')}</div>`}
   $('#main').innerHTML=h||'<p class="empty">No encontramos ese producto. Probá con otra palabra o escribinos por WhatsApp.</p>';
   const n=Object.keys(cart).length,tot=subtotal();
-  $('#cartbar').hidden=!n; $('#cbN').textContent='Ver pedido ('+n+(n===1?' producto)':' productos)'); $('#cbT').textContent=money(tot);}
+  $('#cartbar').hidden=!n; $('#cbN').textContent='Ver carrito ('+n+(n===1?' producto)':' productos)'); $('#cbT').textContent=money(tot);$('#cartHeadN').textContent=n;$('#cartHead').setAttribute('aria-label',`Ver carrito, ${n} productos`);}
 function subtotal(){return Object.entries(cart).reduce((s,[k,q])=>{const [id,i]=k.split('|');return s+find(id).o[i].p*q},0)}
 
 /* ====== Carrito ====== */
 function drawCart(){
   const L=Object.entries(cart).map(([k,q])=>{const [id,i]=k.split('|'),p=find(id),o=p.o[i];
-    return `<div class="line"><b>${p.n}</b><div class="step"><button data-dec="${k}" aria-label="Quitar uno">−</button><output>${fq(q,o.u)}</output><button data-inc="${k}" aria-label="Sumar uno">+</button></div>
-    <em>${o.l==='Kilo'?'':o.l+' · '}${money(o.p)} · ${money(o.p*q)}</em></div>`}).join('');
+    return `<div class="line"><b>${esc(p.n)}</b><div class="step"><button data-dec="${k}" aria-label="Quitar uno">−</button><output>${fq(q,o.u)}</output><button data-inc="${k}" aria-label="Sumar uno">+</button></div>
+    <em>${o.l==='Kilo'?'':esc(o.l)+' · '}${money(o.p)} · ${money(o.p*q)}</em></div>`}).join('');
   $('#lines').innerHTML=L?`<div style="display:grid;gap:8px">${L}</div>`:'<p class="empty">Tu pedido está vacío. Sumá productos del catálogo.</p>';
   $('#ships').innerHTML='<legend>¿Cómo lo recibís?</legend>'+NEGOCIO.envios.map(e=>`<label class="ship"><input type="radio" name="ship" value="${e.id}" ${e.id===ship?'checked':''}><span><b>${e.t}</b><br><small>${e.d}</small></span><b>${e.p?money(e.p):'Gratis'}</b></label>`).join('');
   const e=NEGOCIO.envios.find(x=>x.id===ship),s=subtotal();
@@ -249,6 +309,43 @@ function send(){
   window.open(`https://wa.me/${NEGOCIO.tel}?text=${encodeURIComponent(msg)}`,'_blank','noopener');
 }
 
+function showAdminLogin(message,error=''){
+  $('#adminAuth').hidden=false;$('#adminForm').hidden=true;$('#loginForm').hidden=false;
+  $('#authStatus').textContent=message;$('#authError').textContent=error;$('#logoutAdmin').hidden=true;$('#loginPin').value='';
+}
+function adminRefreshProducts(){
+  $('#adminProduct').innerHTML='<option value="">Agregar producto nuevo</option>'+PRODUCTS.map(p=>`<option value="${esc(p.id)}">${esc(p.n)}</option>`).join('');
+}
+function adminLoad(){
+  const p=find($('#adminProduct').value);$('#adminErr').textContent='';$('#deleteProduct').hidden=!p;
+  if(!p){$('#adminOptionWrap').hidden=true;$('#adminName').value='';$('#adminCategory').value=Object.keys(CATS)[0];$('#adminDescription').value='';$('#adminLabel').value='Unidad';$('#adminUnit').value='u';$('#adminPrice').value='';$('#adminImage').value='';$('#imageHint').textContent='Opcional; se guarda en este dispositivo.';return}
+  $('#adminName').value=p.n;$('#adminCategory').value=p.c;$('#adminDescription').value=p.d;$('#adminImage').value='';
+  $('#adminOption').innerHTML=p.o.map((o,i)=>`<option value="${i}">${esc(o.l)} · ${money(o.p)}</option>`).join('');
+  $('#adminOptionWrap').hidden=p.o.length<2;adminLoadOption();
+  $('#imageHint').textContent=imageFor(p)?'Ya tiene una foto. Elegí otro archivo para reemplazarla.':'Opcional; se guarda en este dispositivo.';
+}
+function adminLoadOption(){const p=find($('#adminProduct').value);if(!p)return;const o=p.o[+$('#adminOption').value||0];if(o){$('#adminLabel').value=o.l;$('#adminUnit').value=o.u;$('#adminPrice').value=o.p}}
+function adminOpen(){
+  $('#adminCategory').innerHTML=Object.entries(CATS).map(([id,c])=>`<option value="${id}">${esc(c[0])}</option>`).join('');
+  $('#admin').showModal();showAdminLogin('Ingresá el PIN para administrar la tienda.');
+}
+function loadImage(file){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>{const scale=Math.min(1,1000/Math.max(image.width,image.height)),canvas=document.createElement('canvas');canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);const ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(image,0,0,canvas.width,canvas.height);URL.revokeObjectURL(image.src);resolve(canvas.toDataURL('image/jpeg',.78))};image.onerror=()=>reject(new Error('No se pudo abrir esa imagen.'));image.src=URL.createObjectURL(file)})}
+async function saveAdmin(ev){
+  ev.preventDefault();$('#adminErr').textContent='';
+  if(!isStoreAdmin)return $('#adminErr').textContent='Iniciá sesión con una cuenta de dueño autorizada.';
+  const name=$('#adminName').value.trim(),price=Number($('#adminPrice').value),unit=$('#adminUnit').value,label=unit==='kg'?'Kilo':$('#adminLabel').value.trim();
+  if(!name||!label||!Number.isFinite(price)||price<0)return $('#adminErr').textContent='Completá el nombre, la presentación y un precio válido.';
+  const selected=find($('#adminProduct').value),file=$('#adminImage').files[0];let image=selected?imageFor(selected):undefined;
+  try{if(file)image=await loadImage(file)}catch(error){return $('#adminErr').textContent=error.message||'No se pudo abrir esa imagen.'}
+  const next=PRODUCTS.map(p=>({...p,o:p.o.map(o=>({...o}))}));let product;
+  if(selected){product=next.find(p=>p.id===selected.id);const option=+$('#adminOption').value||0;product.n=name;product.c=$('#adminCategory').value;product.d=$('#adminDescription').value.trim();product.img=image;if(product.o[option])product.o[option]={l:label,p:price,u:unit}}
+  else{let id=name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'producto';while(next.some(p=>p.id===id))id+='-2';const emoji={verduras:'🥦',frutas:'🍎',hojas:'🌿',huevos:'🥚'};product={id,c:$('#adminCategory').value,e:emoji[$('#adminCategory').value]||'🛒',n:name,d:$('#adminDescription').value.trim(),img:image,o:[{l:label,p:price,u:unit}]};next.push(product)}
+  const business={...NEGOCIO,envios:NEGOCIO.envios.map(e=>({...e}))};business.envios.find(e=>e.id==='lf').p=Number($('#priceLf').value);business.envios.find(e=>e.id==='vh').p=Number($('#priceVh').value);business.horarios=$('#adminHours').value.trim()||'Consultar por WhatsApp';
+  if(!store.set('dg-products',next))return $('#adminErr').textContent='No hay espacio disponible para guardar. Probá con una foto más liviana.';
+  if(!store.set('dg-business',business))return $('#adminErr').textContent='No se pudieron guardar los datos del local.';
+  PRODUCTS=next;Object.assign(NEGOCIO,business);updateInfo();draw();drawCart();adminRefreshProducts();$('#adminProduct').value=product.id;adminLoad();toast('Cambios guardados');
+}
+
 /* ====== Eventos ====== */
 document.addEventListener('click',ev=>{const b=ev.target.closest('button'); if(!b)return;
   if(b.dataset.inc){change(b.dataset.inc,1); if(cart[b.dataset.inc]===stepOf(find(b.dataset.inc.split('|')[0]).o[+b.dataset.inc.split('|')[1]]))toast('Agregado al pedido')}
@@ -258,6 +355,12 @@ document.addEventListener('click',ev=>{const b=ev.target.closest('button'); if(!
   else if(b.hasAttribute('data-close'))b.closest('dialog').close();
 });
 $('#q').addEventListener('input',e=>{term=e.target.value;draw()});
+$('#cartHead').onclick=()=>{drawCart();$('#cart').showModal()};
+$('#adminBtn').onclick=adminOpen;$('#adminForm').addEventListener('submit',saveAdmin);
+$('#loginForm').addEventListener('submit',ev=>{ev.preventDefault();$('#authError').textContent='';if($('#loginPin').value!==ADMIN_PIN){$('#authError').textContent='PIN incorrecto.';$('#loginPin').select();return}isStoreAdmin=true;$('#adminAuth').hidden=false;$('#loginForm').hidden=true;$('#logoutAdmin').hidden=false;$('#authStatus').textContent='Administración habilitada.';$('#adminForm').hidden=false;adminRefreshProducts();$('#priceLf').value=NEGOCIO.envios.find(e=>e.id==='lf').p;$('#priceVh').value=NEGOCIO.envios.find(e=>e.id==='vh').p;$('#adminHours').value=NEGOCIO.horarios||'';adminLoad()});
+$('#logoutAdmin').onclick=()=>{isStoreAdmin=false;showAdminLogin('Sesión cerrada. Ingresá el PIN para administrar la tienda.')};
+$('#adminProduct').addEventListener('change',adminLoad);$('#adminOption').addEventListener('change',adminLoadOption);
+$('#deleteProduct').onclick=()=>{const id=$('#adminProduct').value;if(!isStoreAdmin||!id||!confirm('¿Eliminar este producto del catálogo?'))return;const next=PRODUCTS.filter(p=>p.id!==id);if(!store.set('dg-products',next))return $('#adminErr').textContent='No se pudo guardar el cambio.';PRODUCTS=next;for(const k of Object.keys(cart))if(k.startsWith(id+'|'))delete cart[k];store.set('dg-cart',cart);draw();drawCart();adminRefreshProducts();adminLoad();toast('Producto eliminado')};
 $('#openCart').onclick=()=>{drawCart();$('#cart').showModal()};
 $('#send').onclick=send;
 $('#clear').onclick=()=>{cart={};store.set('dg-cart',cart);draw();drawCart();$('#cart').close()};
