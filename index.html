@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Don Gomez · Frutas &amp; Verduras</title>
+<meta name="description" content="Pedí frutas y verduras frescas. Delivery en La Falda y Valle Hermoso.">
+<meta name="theme-color" content="#014f32">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Don Gomez">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--g:#014f32;--g2:#0c7a4b;--or:#fd8704;--rd:#eb171c;--bg:#f2f7ef;--ink:#17281f;--mut:#5d7166;--card:#fff;--line:#dbe6d6;
+--serif:'Lora',Georgia,serif;--sans:'Nunito',system-ui,-apple-system,'Segoe UI',sans-serif}
+*{box-sizing:border-box;margin:0}
+html{scroll-padding-top:70px}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.45;padding-bottom:96px;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid var(--or);outline-offset:2px}
+.banner{display:block;width:100%;height:auto;background:#fff}
+.info{display:flex;gap:10px;overflow-x:auto;padding:14px 16px;max-width:1100px;margin:auto;scrollbar-width:none}
+.info>*{flex:0 0 auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:9px 14px;font-size:.88rem;text-decoration:none;color:inherit;display:flex;flex-direction:column}
+.info b{font-family:var(--serif);color:var(--g);font-size:1rem}
+.info span{color:var(--mut);font-size:.8rem}
+.bar{position:sticky;top:0;z-index:5;background:rgba(242,247,239,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:10px 16px 8px}
+.bar>div{max-width:1100px;margin:auto}
+.row{display:flex;gap:8px;align-items:center}
+.search{flex:1;min-width:0;border:2px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px}
+.search:focus{border-color:var(--g2);outline:0}
+.ibtn{background:var(--g);color:#fff;border-radius:999px;padding:10px 14px;font-weight:800;font-size:.85rem;white-space:nowrap}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 2px;scrollbar-width:none}
+.chip{flex:0 0 auto;border-radius:999px;padding:7px 15px;background:#fff;border:1.5px solid var(--line);font-weight:600;font-size:.9rem}
+.chip[aria-pressed=true]{background:var(--g);border-color:var(--g);color:#fff}
+main{max-width:1100px;margin:auto;padding:8px 16px}
+h2{font-family:var(--serif);color:var(--g);font-size:1.35rem;margin:22px 0 12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.card{background:var(--card);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);position:relative}
+.card.in{border-color:var(--g2);box-shadow:0 0 0 2px var(--g2) inset}
+.tile{height:92px;border-radius:14px;display:grid;place-items:center;font-size:3.2rem;background:var(--t,#dff1d8)}
+.card h3{font-family:var(--serif);font-size:1.08rem;color:var(--g);line-height:1.2}
+.card p{font-size:.85rem;color:var(--mut);flex:1}
+.opts{display:flex;gap:6px;flex-wrap:wrap}
+.opt{border:1.5px solid var(--line);border-radius:10px;padding:4px 10px;font-size:.8rem;font-weight:600;background:#fff}
+.opt[aria-pressed=true]{border-color:var(--or);background:#fff3e2;color:#9a4d00}
+.buy{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
+.price{font-family:var(--serif);font-weight:700;font-size:1.2rem}
+.price small{font-family:var(--sans);font-weight:600;font-size:.75rem;color:var(--mut)}
+.add{background:var(--or);color:#fff;border-radius:12px;padding:9px 16px;font-weight:800;box-shadow:0 2px 0 #c96a00}
+.add:active{transform:translateY(1px);box-shadow:none}
+.step{display:flex;align-items:center;background:var(--g);color:#fff;border-radius:12px}
+.step button{color:#fff;width:38px;height:38px;font-size:1.3rem;font-weight:800}
+.step output{min-width:52px;text-align:center;font-weight:800;font-size:.9rem}
+.empty{text-align:center;color:var(--mut);padding:40px 0}
+.cartbar{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));z-index:6;pointer-events:none;display:flex;justify-content:center}
+.cartbar button{pointer-events:auto;width:100%;max-width:520px;background:var(--rd);color:#fff;border-radius:16px;padding:14px 18px;display:flex;justify-content:space-between;font-weight:800;box-shadow:0 8px 24px rgba(1,79,50,.35)}
+.cartbar[hidden]{display:none}
+dialog{border:0;padding:0;background:var(--bg);color:var(--ink);width:100%;max-width:520px;max-height:92vh;margin:auto auto 0;border-radius:24px 24px 0 0;overflow:auto}
+dialog::backdrop{background:rgba(1,30,19,.55)}
+@media(min-width:640px){dialog{margin:auto;border-radius:24px}}
+.dh{position:sticky;top:0;background:var(--g);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;z-index:1}
+.dh h2{color:#fff;margin:0;font-size:1.2rem}
+.x{color:#fff;font-size:1.6rem;width:36px;height:36px}
+.db{padding:16px 18px 22px;display:grid;gap:14px}
+.line{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;background:#fff;border-radius:14px;padding:10px 12px;border:1px solid var(--line)}
+.line b{font-family:var(--serif);color:var(--g)}
+.line em{font-style:normal;color:var(--mut);font-size:.8rem}
+.line .step{grid-row:span 2;grid-column:2}
+.line .step button{width:32px;height:32px}
+fieldset{border:0;padding:0;display:grid;gap:8px}
+legend{font-weight:800;margin-bottom:6px;color:var(--g)}
+.ship{display:flex;gap:10px;align-items:center;background:#fff;border:2px solid var(--line);border-radius:14px;padding:11px 12px;cursor:pointer}
+.ship:has(input:checked){border-color:var(--g2);background:#eaf6ee}
+.ship input{accent-color:var(--g2);width:18px;height:18px}
+.ship span{flex:1}.ship b{font-family:var(--serif)}
+label.f{display:grid;gap:4px;font-weight:600;font-size:.9rem}
+.f input,.f textarea,.f select{border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;font-weight:400}
+.f input:focus,.f textarea:focus,.f select:focus{border-color:var(--g2);outline:0}
+.sum{display:grid;gap:4px}
+.sum div{display:flex;justify-content:space-between}
+.sum .t{font-family:var(--serif);font-size:1.35rem;font-weight:700;color:var(--g);border-top:2px dashed var(--line);padding-top:8px;margin-top:4px}
+.wa{background:#1fa855;color:#fff;border-radius:16px;padding:15px;font-weight:800;font-size:1.05rem;width:100%;box-shadow:0 2px 0 #137a3c}
+.ghost{color:var(--rd);font-weight:700;font-size:.85rem;justify-self:center}
+.note{font-size:.8rem;color:var(--mut)}
+.err{color:var(--rd);font-weight:700;font-size:.9rem;min-height:1.2em}
+#qrbox{background:#fff;border-radius:16px;padding:12px;width:min(260px,100%);margin:auto}
+#qrbox svg{width:100%;height:auto;display:block}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--g);color:#fff;padding:10px 18px;border-radius:999px;font-weight:700;z-index:20;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.on{opacity:1}
+footer{text-align:center;color:var(--mut);font-size:.82rem;padding:24px 16px}
+@media print{body>*:not(#qr){display:none!important}#qr{position:static;box-shadow:none;max-height:none}.dh,.qrno{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<img class="banner" src="banner.webp" alt="Don Gomez, Frutas y Verduras. Fresco todos los días" width="1400" height="525">
+<section class="info" aria-label="Datos del local">
+  <a href="https://maps.google.com/?q=Avenida+Espa%C3%B1a+580,+La+Falda,+C%C3%B3rdoba" target="_blank" rel="noopener"><b>Av. España 580</b><span>La Falda, Córdoba</span></a>
+  <a href="tel:+543548433620"><b>3548 43-3620</b><span>Llamanos o escribinos</span></a>
+  <div><b>Delivery La Falda</b><span id="i1"></span></div>
+  <div><b>Delivery Valle Hermoso</b><span id="i2"></span></div>
+</section>
+
+<div class="bar"><div>
+  <div class="row">
+    <input class="search" id="q" type="search" placeholder="Buscar: tomate, huevos, palta…" aria-label="Buscar productos" autocomplete="off">
+    <button class="ibtn" id="qrBtn" aria-label="Instalar app y código QR">📲 App / QR</button>
+  </div>
+  <div class="chips" id="chips" role="group" aria-label="Categorías"></div>
+</div></div>
+
+<main id="main"></main>
+<footer>Don Gomez · Av. España 580, La Falda · WhatsApp 3548 43-3620<br>Los productos por kilo se pesan al armar el pedido: el total final puede variar levemente.</footer>
+
+<div class="cartbar" id="cartbar" hidden><button id="openCart"><span id="cbN"></span><span id="cbT"></span></button></div>
+<div class="toast" id="toast" role="status"></div>
+
+<dialog id="cart" aria-labelledby="cartT">
+  <div class="dh"><h2 id="cartT">Tu pedido</h2><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <div class="db">
+    <div id="lines"></div>
+    <fieldset id="ships"><legend>¿Cómo lo recibís?</legend></fieldset>
+    <label class="f">Tu nombre<input id="fn" autocomplete="name" placeholder="Nombre y apellido"></label>
+    <label class="f" id="fa">Dirección de entrega<input id="fad" autocomplete="street-address" placeholder="Calle, número y barrio"></label>
+    <label class="f">Forma de pago<select id="fp"><option>Efectivo</option><option>Transferencia</option></select></label>
+    <label class="f">Aclaraciones (opcional)<textarea id="fnote" rows="2" placeholder="Ej: tomates maduros, tocar timbre…"></textarea></label>
+    <div class="sum" id="sum"></div>
+    <div class="err" id="err" role="alert"></div>
+    <button class="wa" id="send">Enviar pedido por WhatsApp</button>
+    <p class="note">Se abre WhatsApp con tu pedido listo para enviar. Te confirmamos el total final y el horario.</p>
+    <button class="ghost" id="clear">Vaciar pedido</button>
+  </div>
+</dialog>
+
+<dialog id="qr" aria-labelledby="qrT">
+  <div class="dh"><h2 id="qrT">Instalá la app de Don Gomez</h2><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <div class="db" style="text-align:center">
+    <p>Escaneá el código con la cámara del celular para abrir la app.</p>
+    <div id="qrbox"></div>
+    <button class="ibtn qrno" id="install" hidden>Instalar en este dispositivo</button>
+    <p class="note qrno" id="ios" hidden>En iPhone: tocá <b>Compartir</b> y después <b>Agregar a inicio</b>.</p>
+    <label class="f qrno" style="text-align:left">Dirección del código<input id="qrUrl" inputmode="url"></label>
+    <button class="ibtn qrno" onclick="print()">Imprimir QR para el local</button>
+  </div>
+</dialog>
+
+<script src="qrcode.js"></script>
+<script>
+/* ====== CONFIGURACIÓN: editá acá tus datos ====== */
+const NEGOCIO={nombre:'Don Gomez',tel:'5493548433620',dir:'Av. España 580, La Falda',
+ envios:[{id:'local',t:'Retiro en el local',d:'Av. España 580, La Falda',p:0},
+         {id:'lf',t:'Delivery en La Falda',d:'Te lo llevamos a domicilio',p:2500},
+         {id:'vh',t:'Delivery en Valle Hermoso',d:'Te lo llevamos a domicilio',p:3000}]};
+const CATS={verduras:['Verduras','#dff1d8'],frutas:['Frutas','#ffe6c7'],hojas:['Hojas y hierbas','#d3efe2'],huevos:['Huevos','#fff0bd']};
+/* u:'kg' se vende por kilo (paso 0,5 kg) · u:'u' por unidad/atado/docena/maple. Precios de ejemplo: cambialos. */
+const kg=p=>[{l:'Kilo',p,u:'kg'}], un=(l,p)=>[{l,p,u:'u'}];
+const PRODUCTS=[
+{id:'tomate',c:'verduras',e:'🍅',n:'Tomate perita',d:'Firme y sabroso, ideal para salsas y ensaladas.',o:kg(2800)},
+{id:'papa',c:'verduras',e:'🥔',n:'Papa blanca',d:'Para hervir, freír o hacer puré.',o:kg(1200)},
+{id:'cebolla',c:'verduras',e:'🧅',n:'Cebolla',d:'Cebolla común de guarda.',o:kg(1000)},
+{id:'zanahoria',c:'verduras',e:'🥕',n:'Zanahoria',d:'Dulce y crocante, sin hojas.',o:kg(1100)},
+{id:'morron',c:'verduras',e:'🫑',n:'Morrón rojo',d:'Para rellenar, asar o ensaladas.',o:kg(4500)},
+{id:'zapallito',c:'verduras',e:'🥒',n:'Zapallito verde',d:'Tierno, para rellenar o al horno.',o:kg(2200)},
+{id:'zapallo',c:'verduras',e:'🎃',n:'Zapallo anco',d:'Perfecto para puré, sopa y al horno.',o:kg(1300)},
+{id:'batata',c:'verduras',e:'🍠',n:'Batata',d:'Dulce, ideal al horno o en puré.',o:kg(1500)},
+{id:'berenjena',c:'verduras',e:'🍆',n:'Berenjena',d:'Para milanesas, escabeche o al horno.',o:kg(2400)},
+{id:'choclo',c:'verduras',e:'🌽',n:'Choclo',d:'Tierno y dulce. Precio por unidad.',o:un('Unidad',700)},
+{id:'ajo',c:'verduras',e:'🧄',n:'Ajo',d:'Cabezas grandes, muy aromáticas.',o:kg(7000)},
+{id:'manzana',c:'frutas',e:'🍎',n:'Manzana roja',d:'Crocante y jugosa.',o:kg(2300)},
+{id:'banana',c:'frutas',e:'🍌',n:'Banana',d:'En su punto justo de maduración.',o:kg(2200)},
+{id:'naranja',c:'frutas',e:'🍊',n:'Naranja de jugo',d:'Dulce y jugosa, para exprimir.',o:kg(1300)},
+{id:'mandarina',c:'frutas',e:'🍊',n:'Mandarina',d:'Fácil de pelar y bien dulce.',o:kg(1800)},
+{id:'limon',c:'frutas',e:'🍋',n:'Limón',d:'Mucho jugo y aroma.',o:kg(1600)},
+{id:'pera',c:'frutas',e:'🍐',n:'Pera',d:'Tierna y perfumada.',o:kg(2400)},
+{id:'frutilla',c:'frutas',e:'🍓',n:'Frutillas',d:'Rojas y dulces, para el postre.',o:kg(6500)},
+{id:'uva',c:'frutas',e:'🍇',n:'Uva',d:'Racimos dulces y sin semilla.',o:kg(4800)},
+{id:'palta',c:'frutas',e:'🥑',n:'Palta',d:'Cremosa, lista para tostadas y ensaladas.',o:kg(6000)},
+{id:'kiwi',c:'frutas',e:'🥝',n:'Kiwi',d:'Ácido y refrescante, rico en vitamina C.',o:kg(4200)},
+{id:'lechuga',c:'hojas',e:'🥬',n:'Lechuga criolla',d:'Fresca, hojas tiernas. Por planta.',o:un('Planta',1200)},
+{id:'espinaca',c:'hojas',e:'🥬',n:'Espinaca',d:'Atado grande de hojas tiernas.',o:un('Atado',1500)},
+{id:'acelga',c:'hojas',e:'🥬',n:'Acelga',d:'Atado grande, para tartas y tortillas.',o:un('Atado',1300)},
+{id:'rucula',c:'hojas',e:'🌿',n:'Rúcula',d:'Atado de hojas con sabor intenso.',o:un('Atado',1300)},
+{id:'perejil',c:'hojas',e:'🌿',n:'Perejil',d:'Atado fresco recién cortado.',o:un('Atado',600)},
+{id:'albahaca',c:'hojas',e:'🌱',n:'Albahaca',d:'Atado aromático para salsas y pesto.',o:un('Atado',900)},
+{id:'huevoB',c:'huevos',e:'🥚',n:'Huevos blancos',d:'Frescos, de granja. Elegí cómo llevarlos.',o:[{l:'Unidad',p:300,u:'u'},{l:'Docena',p:3400,u:'u'},{l:'Maple x30',p:8200,u:'u'}]},
+{id:'huevoC',c:'huevos',e:'🥚',n:'Huevos de color',d:'Yema bien anaranjada, sabor casero.',o:[{l:'Unidad',p:330,u:'u'},{l:'Docena',p:3800,u:'u'},{l:'Maple x30',p:9200,u:'u'}]}
+];
+
+/* ====== Utilidades ====== */
+const $=s=>document.querySelector(s), money=n=>'$'+Math.round(n).toLocaleString('es-AR');
+const fq=(q,u)=>u==='kg'?String(q).replace('.',',')+' kg':String(q);
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+let cart=store.get('dg-cart',{}), sel={}, cat='todo', term='', ship=store.get('dg-ship','local');
+const key=(id,i)=>id+'|'+i, find=id=>PRODUCTS.find(p=>p.id===id);
+const stepOf=o=>o.u==='kg'?0.5:1;
+function change(k,dir){const [id,i]=k.split('|'),o=find(id).o[i],s=stepOf(o);
+  const q=Math.round(((cart[k]||0)+dir*s)*10)/10; if(q<=0)delete cart[k]; else cart[k]=q;
+  store.set('dg-cart',cart); draw(); drawCart();}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),1800)}
+
+/* ====== Catálogo ====== */
+$('#i1').textContent=money(NEGOCIO.envios[1].p); $('#i2').textContent=money(NEGOCIO.envios[2].p);
+function drawChips(){const all=[['todo','Todo'],...Object.entries(CATS).map(([k,v])=>[k,v[0]])];
+  $('#chips').innerHTML=all.map(([k,l])=>`<button class="chip" data-cat="${k}" aria-pressed="${k===cat}">${l}</button>`).join('')}
+function card(p){const i=sel[p.id]??0,o=p.o[i],k=key(p.id,i),q=cart[k]||0,inCart=p.o.some((_,j)=>cart[key(p.id,j)]);
+  return `<article class="card${inCart?' in':''}"><div class="tile" style="--t:${CATS[p.c][1]}" aria-hidden="true">${p.e}</div>
+  <h3>${p.n}</h3><p>${p.d}</p>
+  ${p.o.length>1?`<div class="opts" role="group" aria-label="Presentación">${p.o.map((x,j)=>`<button class="opt" data-sel="${p.id}|${j}" aria-pressed="${j===i}">${x.l}</button>`).join('')}</div>`:''}
+  <div class="buy"><div class="price">${money(o.p)} <small>/ ${o.u==='kg'?'kg':o.l.toLowerCase()}</small></div>
+  ${q?`<div class="step"><button data-dec="${k}" aria-label="Quitar uno de ${p.n}">−</button><output>${fq(q,o.u)}</output><button data-inc="${k}" aria-label="Sumar ${p.n}">+</button></div>`
+     :`<button class="add" data-inc="${k}" aria-label="Agregar ${p.n}">Agregar</button>`}</div></article>`}
+function draw(){const t=term.trim().toLowerCase();
+  const list=PRODUCTS.filter(p=>(cat==='todo'||p.c===cat)&&(!t||(p.n+' '+p.d).toLowerCase().includes(t)));
+  let h='';
+  for(const c of Object.keys(CATS)){const items=list.filter(p=>p.c===c); if(!items.length)continue;
+    h+=`<h2>${CATS[c][0]}</h2><div class="grid">${items.map(card).join('')}</div>`}
+  $('#main').innerHTML=h||'<p class="empty">No encontramos ese producto. Probá con otra palabra o escribinos por WhatsApp.</p>';
+  const n=Object.keys(cart).length,tot=subtotal();
+  $('#cartbar').hidden=!n; $('#cbN').textContent='Ver pedido ('+n+(n===1?' producto)':' productos)'); $('#cbT').textContent=money(tot);}
+function subtotal(){return Object.entries(cart).reduce((s,[k,q])=>{const [id,i]=k.split('|');return s+find(id).o[i].p*q},0)}
+
+/* ====== Carrito ====== */
+function drawCart(){
+  const L=Object.entries(cart).map(([k,q])=>{const [id,i]=k.split('|'),p=find(id),o=p.o[i];
+    return `<div class="line"><b>${p.n}</b><div class="step"><button data-dec="${k}" aria-label="Quitar uno">−</button><output>${fq(q,o.u)}</output><button data-inc="${k}" aria-label="Sumar uno">+</button></div>
+    <em>${o.l==='Kilo'?'':o.l+' · '}${money(o.p)} · ${money(o.p*q)}</em></div>`}).join('');
+  $('#lines').innerHTML=L?`<div style="display:grid;gap:8px">${L}</div>`:'<p class="empty">Tu pedido está vacío. Sumá productos del catálogo.</p>';
+  $('#ships').innerHTML='<legend>¿Cómo lo recibís?</legend>'+NEGOCIO.envios.map(e=>`<label class="ship"><input type="radio" name="ship" value="${e.id}" ${e.id===ship?'checked':''}><span><b>${e.t}</b><br><small>${e.d}</small></span><b>${e.p?money(e.p):'Gratis'}</b></label>`).join('');
+  const e=NEGOCIO.envios.find(x=>x.id===ship),s=subtotal();
+  $('#fa').hidden=!e.p;
+  $('#sum').innerHTML=`<div><span>Productos</span><span>${money(s)}</span></div><div><span>${e.t}</span><span>${e.p?money(e.p):'Gratis'}</span></div><div class="t"><span>Total</span><span>${money(s+e.p)}</span></div>`;
+  $('#send').disabled=!L; if(!L&&$('#cart').open&&false)$('#cart').close();}
+function send(){
+  const e=NEGOCIO.envios.find(x=>x.id===ship),name=$('#fn').value.trim(),addr=$('#fad').value.trim();
+  if(!Object.keys(cart).length)return $('#err').textContent='Agregá al menos un producto.';
+  if(!name)return $('#err').textContent='Escribí tu nombre para el pedido.';
+  if(e.p&&!addr)return $('#err').textContent='Escribí la dirección de entrega.';
+  $('#err').textContent=''; store.set('dg-user',{name,addr,pay:$('#fp').value});
+  const lines=Object.entries(cart).map(([k,q])=>{const [id,i]=k.split('|'),p=find(id),o=p.o[i];
+    return `• ${o.u==='kg'?fq(q,'kg'):q+' × '+o.l} ${p.n} — ${money(o.p*q)}`});
+  const s=subtotal(),note=$('#fnote').value.trim();
+  const msg=[`*Pedido para ${NEGOCIO.nombre}*`,`Cliente: ${name}`,'',...lines,'',`Productos: ${money(s)}`,`${e.t}: ${e.p?money(e.p):'Gratis'}`,`*Total: ${money(s+e.p)}*`,'',
+    e.p?`Dirección: ${addr}`:`Retiro en ${NEGOCIO.dir}`,`Pago: ${$('#fp').value}`,note?`Nota: ${note}`:'',`(Los productos por kilo pueden variar levemente de precio según el peso.)`].filter((x,i,a)=>x!==''||a[i-1]!=='').join('\n');
+  window.open(`https://wa.me/${NEGOCIO.tel}?text=${encodeURIComponent(msg)}`,'_blank','noopener');
+}
+
+/* ====== Eventos ====== */
+document.addEventListener('click',ev=>{const b=ev.target.closest('button'); if(!b)return;
+  if(b.dataset.inc){change(b.dataset.inc,1); if(cart[b.dataset.inc]===stepOf(find(b.dataset.inc.split('|')[0]).o[+b.dataset.inc.split('|')[1]]))toast('Agregado al pedido')}
+  else if(b.dataset.dec)change(b.dataset.dec,-1);
+  else if(b.dataset.sel){const [id,i]=b.dataset.sel.split('|');sel[id]=+i;draw()}
+  else if(b.dataset.cat){cat=b.dataset.cat;drawChips();draw();scrollTo({top:0,behavior:'smooth'})}
+  else if(b.hasAttribute('data-close'))b.closest('dialog').close();
+});
+$('#q').addEventListener('input',e=>{term=e.target.value;draw()});
+$('#openCart').onclick=()=>{drawCart();$('#cart').showModal()};
+$('#send').onclick=send;
+$('#clear').onclick=()=>{cart={};store.set('dg-cart',cart);draw();drawCart();$('#cart').close()};
+$('#ships').addEventListener('change',e=>{ship=e.target.value;store.set('dg-ship',ship);drawCart()});
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+const u=store.get('dg-user',{}); $('#fn').value=u.name||''; $('#fad').value=u.addr||''; if(u.pay)$('#fp').value=u.pay;
+
+/* ====== QR e instalación ====== */
+function drawQR(){const url=$('#qrUrl').value.trim()||location.href;
+  try{const q=qrcode(0,'M');q.addData(url);q.make();$('#qrbox').innerHTML=q.createSvgTag({cellSize:6,margin:1,scalable:true})}catch{$('#qrbox').textContent='No se pudo generar el código.'}}
+$('#qrBtn').onclick=()=>{$('#qrUrl').value=location.href.split('#')[0];drawQR();$('#qr').showModal()};
+$('#qrUrl').addEventListener('input',drawQR);
+let dip; addEventListener('beforeinstallprompt',e=>{e.preventDefault();dip=e;$('#install').hidden=false});
+$('#install').onclick=async()=>{if(!dip)return;dip.prompt();await dip.userChoice;dip=null;$('#install').hidden=true};
+if(/iphone|ipad/i.test(navigator.userAgent)&&!matchMedia('(display-mode: standalone)').matches)$('#ios').hidden=false;
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+
+drawChips();draw();
+</script>
+</body>
+</html>
