@@ -1,4 +1,4 @@
-const V='dongomez-v2',FILES=['./','index.html','banner.webp','qrcode.js','icon-192.png','icon-512.png','manifest.webmanifest'];
+const V='dongomez-v4',FILES=['./','index.html','admin.html','base.css','banner.webp','qrcode.js','firebase-config.js','icon-192.png','icon-512.png','manifest.webmanifest'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;

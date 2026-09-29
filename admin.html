@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Panel del dueño · Don Gomez</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#014f32">
+<link rel="icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css">
+<style>
+body{padding-bottom:40px}
+header{background:var(--g);color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+header h1{font-family:var(--serif);font-size:1.25rem}
+header a{color:#fff;font-size:.85rem;text-decoration:underline}
+main{max-width:760px;margin:auto;padding:18px 16px 60px;display:grid;gap:22px}
+.gate{max-width:380px;margin:15vh auto;padding:0 20px;display:grid;gap:14px;text-align:center}
+.gate h1{font-family:var(--serif);color:var(--g)}
+section.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+section.card h2{font-family:var(--serif);color:var(--g);font-size:1.1rem;margin-bottom:12px}
+.plist{display:grid;gap:10px}
+.prow{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:8px 10px}
+.prow .th{width:54px;height:54px;border-radius:10px;background:#eef4ea;display:grid;place-items:center;font-size:1.7rem;overflow:hidden;flex:0 0 auto}
+.prow .th img{width:100%;height:100%;object-fit:cover}
+.prow .pi{flex:1;min-width:0}
+.prow .pi b{font-family:var(--serif);color:var(--g);display:block}
+.prow .pi span{font-size:.78rem;color:var(--mut)}
+.prow .pa{display:flex;gap:6px;flex:0 0 auto}
+.iconbtn{width:34px;height:34px;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-size:1rem}
+.inactivo{opacity:.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opciones{display:grid;gap:8px;border:1px dashed var(--line);border-radius:12px;padding:10px}
+.opcion{display:grid;grid-template-columns:1fr 90px 90px auto;gap:6px;align-items:center}
+.opcion select,.opcion input{padding:8px}
+.addop{justify-self:start;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:6px 10px;font-size:.82rem;font-weight:700;color:var(--g)}
+.imgpick{display:flex;gap:10px;align-items:center}
+.imgpick .th{width:64px;height:64px;border-radius:12px;background:#eef4ea;overflow:hidden;display:grid;place-items:center;font-size:1.8rem}
+.imgpick .th img{width:100%;height:100%;object-fit:cover}
+.bar2{display:flex;gap:8px;flex-wrap:wrap}
+.hlist{display:grid;gap:8px}
+.hrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center}
+.envrow{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px}
+progress{width:100%}
+</style>
+</head>
+<body>
+<div id="gate" class="gate" hidden>
+  <h1>Panel del dueño</h1>
+  <p class="note">Ingresá el PIN para editar los productos, precios y horarios de la verdulería.</p>
+  <label class="f">PIN<input id="pinInput" type="password" inputmode="numeric" autocomplete="off" placeholder="••••"></label>
+  <button class="ibtn" id="pinBtn">Entrar</button>
+  <p class="err" id="pinErr"></p>
+</div>
+
+<div id="app" hidden>
+<header><h1>Panel · Don Gomez</h1><a href="index.html">Ver la app →</a></header>
+<main>
+  <section class="card" id="noFB" hidden>
+    <h2>⚠️ Falta conectar Firebase</h2>
+    <p class="note">Completá <code>firebase-config.js</code> con los datos de tu proyecto para poder guardar cambios. Mientras tanto podés mirar cómo se ve el panel, pero nada se va a guardar.</p>
+  </section>
+
+  <section class="card">
+    <h2>Productos (<span id="pcount">0</span>)</h2>
+    <div class="plist" id="plist"></div>
+    <div class="bar2" style="margin-top:12px">
+      <button class="ibtn" id="newProd">+ Agregar producto</button>
+      <button class="ibtn ghost" id="seedBtn" hidden>Cargar catálogo de ejemplo</button>
+    </div>
+    <p class="note" id="seedNote" hidden>Esto crea los ~28 productos de ejemplo (tomate, papa, huevos, etc.) como productos reales, para que después los edites vos con tus precios y fotos.</p>
+  </section>
+
+  <section class="card">
+    <h2>Envíos</h2>
+    <div class="hlist" id="envList"></div>
+    <p class="note">El retiro en el local siempre es gratis; para los otros dos, cambiá el precio del delivery.</p>
+  </section>
+
+  <section class="card">
+    <h2>Horarios de atención</h2>
+    <div class="hlist" id="horList"></div>
+    <button class="addop" id="addHor" type="button">+ Agregar renglón de horario</button>
+  </section>
+
+  <section class="card">
+    <h2>Aviso de horario de pedidos</h2>
+    <label class="f">Hora de corte<input id="corteHora" type="time"></label>
+    <label class="f">Texto del aviso (se muestra en la app y se agrega al pedido de WhatsApp)<textarea id="avisoCorte" rows="2"></textarea></label>
+    <button class="ibtn" id="saveConfig" style="margin-top:10px">Guardar envíos, horarios y aviso</button>
+    <p class="ok" id="cfgOk"></p>
+  </section>
+
+  <section class="card">
+    <h2>Seguridad</h2>
+    <label class="f">Cambiar PIN de acceso<input id="newPin" inputmode="numeric" placeholder="Nuevo PIN"></label>
+    <button class="ibtn ghost" id="savePin">Guardar nuevo PIN</button>
+    <p class="ok" id="pinOk"></p>
+  </section>
+</main>
+</div>
+
+<dialog id="pdlg" aria-labelledby="pdT">
+  <div class="dh"><h2 id="pdT">Producto</h2><button class="x" data-close aria-label="Cerrar">×</button></div>
+  <div class="db">
+    <div class="imgpick">
+      <div class="th" id="imgPrev">🥗</div>
+      <div style="flex:1;display:grid;gap:6px">
+        <input id="imgUrl" type="text" placeholder="Ej: tomate.jpg">
+        <p class="note">Escribí el nombre que le va a poner Gerardo al archivo de la foto (por ejemplo <code>tomate.jpg</code>) — él la sube después desde su computadora. Si preferís, también podés pegar un link (https://...). Si lo dejás vacío, se usa el emoji.</p>
+      </div>
+    </div>
+    <label class="f">Emoji (si no subís foto)<input id="pEmoji" maxlength="4" placeholder="🥕"></label>
+    <label class="f">Nombre<input id="pNombre" placeholder="Ej: Tomate perita"></label>
+    <label class="f">Descripción<textarea id="pDesc" rows="2" placeholder="Ej: Firme y sabroso, ideal para salsas."></textarea></label>
+    <label class="f">Categoría<select id="pCat"><option value="verduras">Verduras</option><option value="frutas">Frutas</option><option value="hojas">Hojas y hierbas</option><option value="huevos">Huevos</option></select></label>
+    <fieldset class="opciones" id="pOpts"><legend>Presentaciones y precios</legend></fieldset>
+    <button class="addop" id="addOpt" type="button">+ Agregar presentación</button>
+    <label class="ship" style="margin-top:6px"><input type="checkbox" id="pActivo" checked><span><b>Visible en la app</b><br><small>Desmarcá para ocultarlo sin borrarlo</small></span></label>
+    <div class="err" id="pErr"></div>
+    <div class="bar2">
+      <button class="ibtn" id="pSave">Guardar producto</button>
+      <button class="ibtn warn" id="pDelete" hidden>Eliminar</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const money=n=>'$'+Math.round(n).toLocaleString('es-AR');
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('on'),2200)}
+const CAT_LABEL={verduras:'Verduras',frutas:'Frutas',hojas:'Hojas y hierbas',huevos:'Huevos'};
+const kg=p=>[{etiqueta:'Kilo',precio:p,unidad:'kg'}], un=(l,p)=>[{etiqueta:l,precio:p,unidad:'u'}];
+const DEFAULT_PRODUCTS=[
+{id:'tomate',categoria:'verduras',emoji:'🍅',nombre:'Tomate perita',descripcion:'Firme y sabroso, ideal para salsas y ensaladas.',opciones:kg(2800)},
+{id:'papa',categoria:'verduras',emoji:'🥔',nombre:'Papa blanca',descripcion:'Para hervir, freír o hacer puré.',opciones:kg(1200)},
+{id:'cebolla',categoria:'verduras',emoji:'🧅',nombre:'Cebolla',descripcion:'Cebolla común de guarda.',opciones:kg(1000)},
+{id:'zanahoria',categoria:'verduras',emoji:'🥕',nombre:'Zanahoria',descripcion:'Dulce y crocante, sin hojas.',opciones:kg(1100)},
+{id:'morron',categoria:'verduras',emoji:'🫑',nombre:'Morrón rojo',descripcion:'Para rellenar, asar o ensaladas.',opciones:kg(4500)},
+{id:'zapallito',categoria:'verduras',emoji:'🥒',nombre:'Zapallito verde',descripcion:'Tierno, para rellenar o al horno.',opciones:kg(2200)},
+{id:'zapallo',categoria:'verduras',emoji:'🎃',nombre:'Zapallo anco',descripcion:'Perfecto para puré, sopa y al horno.',opciones:kg(1300)},
+{id:'batata',categoria:'verduras',emoji:'🍠',nombre:'Batata',descripcion:'Dulce, ideal al horno o en puré.',opciones:kg(1500)},
+{id:'berenjena',categoria:'verduras',emoji:'🍆',nombre:'Berenjena',descripcion:'Para milanesas, escabeche o al horno.',opciones:kg(2400)},
+{id:'choclo',categoria:'verduras',emoji:'🌽',nombre:'Choclo',descripcion:'Tierno y dulce. Precio por unidad.',opciones:un('Unidad',700)},
+{id:'ajo',categoria:'verduras',emoji:'🧄',nombre:'Ajo',descripcion:'Cabezas grandes, muy aromáticas.',opciones:un('Cabeza',600)},
+{id:'manzana',categoria:'frutas',emoji:'🍎',nombre:'Manzana roja',descripcion:'Crocante y jugosa.',opciones:kg(2300)},
+{id:'banana',categoria:'frutas',emoji:'🍌',nombre:'Banana',descripcion:'En su punto justo de maduración.',opciones:kg(2200)},
+{id:'naranja',categoria:'frutas',emoji:'🍊',nombre:'Naranja de jugo',descripcion:'Dulce y jugosa, para exprimir.',opciones:kg(1300)},
+{id:'mandarina',categoria:'frutas',emoji:'🍊',nombre:'Mandarina',descripcion:'Fácil de pelar y bien dulce.',opciones:kg(1800)},
+{id:'limon',categoria:'frutas',emoji:'🍋',nombre:'Limón',descripcion:'Mucho jugo y aroma.',opciones:kg(1600)},
+{id:'pera',categoria:'frutas',emoji:'🍐',nombre:'Pera',descripcion:'Tierna y perfumada.',opciones:kg(2400)},
+{id:'frutilla',categoria:'frutas',emoji:'🍓',nombre:'Frutillas',descripcion:'Rojas y dulces, para el postre.',opciones:kg(6500)},
+{id:'uva',categoria:'frutas',emoji:'🍇',nombre:'Uva',descripcion:'Racimos dulces y sin semilla.',opciones:kg(4800)},
+{id:'palta',categoria:'frutas',emoji:'🥑',nombre:'Palta',descripcion:'Cremosa, lista para tostadas y ensaladas.',opciones:kg(6000)},
+{id:'kiwi',categoria:'frutas',emoji:'🥝',nombre:'Kiwi',descripcion:'Ácido y refrescante, rico en vitamina C.',opciones:kg(4200)},
+{id:'lechuga',categoria:'hojas',emoji:'🥬',nombre:'Lechuga criolla',descripcion:'Fresca, hojas tiernas. Por planta.',opciones:un('Planta',1200)},
+{id:'espinaca',categoria:'hojas',emoji:'🥬',nombre:'Espinaca',descripcion:'Atado grande de hojas tiernas.',opciones:un('Atado',1500)},
+{id:'acelga',categoria:'hojas',emoji:'🥬',nombre:'Acelga',descripcion:'Atado grande, para tartas y tortillas.',opciones:un('Atado',1300)},
+{id:'rucula',categoria:'hojas',emoji:'🌿',nombre:'Rúcula',descripcion:'Atado de hojas con sabor intenso.',opciones:un('Atado',1300)},
+{id:'perejil',categoria:'hojas',emoji:'🌿',nombre:'Perejil',descripcion:'Atado fresco recién cortado.',opciones:un('Atado',600)},
+{id:'albahaca',categoria:'hojas',emoji:'🌱',nombre:'Albahaca',descripcion:'Atado aromático para salsas y pesto.',opciones:un('Atado',900)},
+{id:'huevoB',categoria:'huevos',emoji:'🥚',nombre:'Huevos blancos',descripcion:'Frescos, de granja. Elegí cómo llevarlos.',opciones:[{etiqueta:'Unidad',precio:300,unidad:'u'},{etiqueta:'Docena',precio:3400,unidad:'u'},{etiqueta:'Maple x30',precio:8200,unidad:'u'}]},
+{id:'huevoC',categoria:'huevos',emoji:'🥚',nombre:'Huevos de color',descripcion:'Yema bien anaranjada, sabor casero.',opciones:[{etiqueta:'Unidad',precio:330,unidad:'u'},{etiqueta:'Docena',precio:3800,unidad:'u'},{etiqueta:'Maple x30',precio:9200,unidad:'u'}]}
+];
+const DEFAULT_CONFIG={
+  tel:'5493548433620',dir:'Av. España 580, La Falda',
+  envios:[{id:'local',t:'Retiro en el local',d:'Av. España 580, La Falda',p:0},
+          {id:'lf',t:'Delivery en La Falda',d:'Te lo llevamos a domicilio',p:2500},
+          {id:'vh',t:'Delivery en Valle Hermoso',d:'Te lo llevamos a domicilio',p:3000}],
+  horarios:[{dia:'Lunes a sábado',horario:'8:00 a 13:00 y 17:00 a 20:30'},{dia:'Domingo',horario:'9:00 a 13:00'}],
+  corteHora:'11:00',
+  avisoCorte:'Los pedidos hechos antes de las 11:00 hs se entregan ese mismo mediodía. Los que se hacen después de las 11:00 hs se entregan por la tarde.',
+  pin:'1234'
+};
+
+/* ---- Acceso por PIN ---- */
+let CFG=DEFAULT_CONFIG, PRODUCTS=[], cfgLoaded=false;
+function showGate(){$('#gate').hidden=false;$('#app').hidden=true}
+function showApp(){$('#gate').hidden=true;$('#app').hidden=false;$('#noFB').hidden=FIREBASE_READY}
+$('#pinBtn').onclick=checkPin;
+$('#pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
+function checkPin(){
+  const v=$('#pinInput').value.trim();
+  if(v===(CFG.pin||'1234')){sessionStorage.setItem('dg-admin-ok','1');showApp();renderAll()}
+  else $('#pinErr').textContent='PIN incorrecto.';
+}
+
+/* ---- Carga inicial desde Firebase ---- */
+async function loadAll(){
+  if(FIREBASE_READY&&db){
+    try{
+      const cdoc=await db.collection('config').doc('general').get();
+      if(cdoc.exists)CFG=Object.assign({},DEFAULT_CONFIG,cdoc.data());
+      else await db.collection('config').doc('general').set(DEFAULT_CONFIG);
+    }catch(e){console.warn(e)}
+    db.collection('productos').onSnapshot(snap=>{
+      PRODUCTS=[]; snap.forEach(doc=>PRODUCTS.push(Object.assign({id:doc.id},doc.data())));
+      PRODUCTS.sort((a,b)=>(a.orden||0)-(b.orden||0)||(a.nombre||'').localeCompare(b.nombre||''));
+      if(!$('#app').hidden)renderProducts();
+    });
+  }
+  cfgLoaded=true;
+  if(sessionStorage.getItem('dg-admin-ok')==='1'){showApp();renderAll()} else showGate();
+}
+
+/* ---- Render ---- */
+function renderAll(){renderProducts();renderEnvios();renderHorarios();$('#corteHora').value=CFG.corteHora||'';$('#avisoCorte').value=CFG.avisoCorte||''}
+function renderProducts(){
+  $('#pcount').textContent=PRODUCTS.length;
+  $('#seedBtn').hidden=PRODUCTS.length>0; $('#seedNote').hidden=PRODUCTS.length>0;
+  $('#plist').innerHTML=PRODUCTS.map(p=>`<div class="prow${p.activo===false?' inactivo':''}">
+    <div class="th">${p.imagenUrl?`<img src="${imgSrc(p.imagenUrl)}" alt="" onerror="this.parentElement.textContent='${(p.emoji||'🥗').replace(/'/g,"\\'")}'">`:(p.emoji||'🥗')}</div>
+    <div class="pi"><b>${p.nombre||'(sin nombre)'}</b><span>${CAT_LABEL[p.categoria]||''} · ${(p.opciones||[]).map(o=>money(o.precio)+'/'+(o.unidad==='kg'?'kg':o.etiqueta.toLowerCase())).join(' · ')}</span></div>
+    <div class="pa"><button class="iconbtn" data-edit="${p.id}" aria-label="Editar">✏️</button></div>
+  </div>`).join('')||'<p class="note">Todavía no cargaste productos.</p>';
+}
+function renderEnvios(){
+  $('#envList').innerHTML=CFG.envios.map((e,i)=>`<div class="envrow">
+    <input class="f" data-env-t="${i}" value="${e.t}" placeholder="Nombre">
+    <input class="f" data-env-d="${i}" value="${e.d}" placeholder="Descripción">
+    <input class="f" data-env-p="${i}" type="number" min="0" step="50" value="${e.p}" style="width:100px" ${e.id==='local'?'disabled title=\"El retiro es gratis\"':''}>
+  </div>`).join('');
+}
+function renderHorarios(){
+  $('#horList').innerHTML=(CFG.horarios||[]).map((h,i)=>`<div class="hrow">
+    <input data-hor-d="${i}" value="${h.dia}" placeholder="Ej: Lunes a sábado">
+    <input data-hor-h="${i}" value="${h.horario}" placeholder="Ej: 8:00 a 13:00">
+    <button class="iconbtn" data-hor-del="${i}" aria-label="Borrar renglón">🗑️</button>
+  </div>`).join('');
+}
+$('#addHor').onclick=()=>{CFG.horarios=CFG.horarios||[];CFG.horarios.push({dia:'',horario:''});renderHorarios()};
+
+/* ---- Guardar configuración (envíos + horarios + aviso) ---- */
+$('#saveConfig').onclick=async()=>{
+  document.querySelectorAll('[data-env-t]').forEach(i=>CFG.envios[+i.dataset.envT].t=i.value);
+  document.querySelectorAll('[data-env-d]').forEach(i=>CFG.envios[+i.dataset.envD].d=i.value);
+  document.querySelectorAll('[data-env-p]').forEach(i=>CFG.envios[+i.dataset.envP].p=Number(i.value)||0);
+  document.querySelectorAll('[data-hor-d]').forEach(i=>CFG.horarios[+i.dataset.horD].dia=i.value);
+  document.querySelectorAll('[data-hor-h]').forEach(i=>CFG.horarios[+i.dataset.horH].horario=i.value);
+  CFG.horarios=(CFG.horarios||[]).filter(h=>h.dia.trim()||h.horario.trim());
+  CFG.corteHora=$('#corteHora').value||'';
+  CFG.avisoCorte=$('#avisoCorte').value.trim();
+  if(!FIREBASE_READY||!db){toast('Conectá Firebase para poder guardar.');return}
+  try{await db.collection('config').doc('general').set(CFG,{merge:true});$('#cfgOk').textContent='Guardado. Ya se actualizó en todos los celulares.';toast('Cambios guardados')}
+  catch(e){$('#cfgOk').textContent='';toast('No se pudo guardar: revisá la conexión.')}
+};
+document.addEventListener('click',e=>{if(e.target.dataset.horDel!==undefined){CFG.horarios.splice(+e.target.dataset.horDel,1);renderHorarios()}});
+
+/* ---- PIN nuevo ---- */
+$('#savePin').onclick=async()=>{
+  const v=$('#newPin').value.trim();
+  if(v.length<4){$('#pinOk').textContent='';toast('Usá un PIN de al menos 4 caracteres.');return}
+  CFG.pin=v;
+  if(FIREBASE_READY&&db){try{await db.collection('config').doc('general').set({pin:v},{merge:true});$('#pinOk').textContent='PIN actualizado.';$('#newPin').value=''}catch(e){toast('No se pudo guardar el PIN.')}}
+};
+
+/* ---- Alta / edición de producto ---- */
+let editId=null;
+function unitOptRow(o={etiqueta:'Kilo',precio:0,unidad:'kg'},i){
+  return `<div class="opcion" data-i="${i}">
+    <input data-op-l="${i}" placeholder="Ej: Kilo, Docena, Atado" value="${o.etiqueta||''}">
+    <input data-op-p="${i}" type="number" min="0" step="10" placeholder="Precio" value="${o.precio||0}">
+    <select data-op-u="${i}"><option value="kg" ${o.unidad==='kg'?'selected':''}>Por kilo</option><option value="u" ${o.unidad==='u'?'selected':''}>Por unidad</option></select>
+    <button class="iconbtn" data-op-del="${i}" type="button" aria-label="Quitar presentación">🗑️</button>
+  </div>`;
+}
+function renderOpts(opts){$('#pOpts').innerHTML='<legend>Presentaciones y precios</legend>'+opts.map((o,i)=>unitOptRow(o,i)).join('')}
+function readOptsFromForm(){
+  const rows=[...document.querySelectorAll('#pOpts .opcion')];
+  return rows.map(r=>{const i=r.dataset.i;
+    return {etiqueta:$(`[data-op-l="${i}"]`).value.trim()||'Kilo',precio:Number($(`[data-op-p="${i}"]`).value)||0,unidad:$(`[data-op-u="${i}"]`).value};
+  });
+}
+function imgSrc(v){return /^https?:\/\//i.test(v)?v:'img/'+v.replace(/^\/+/,'')}
+function openProd(p){
+  editId=p?.id||null;
+  $('#pdT').textContent=p?'Editar producto':'Nuevo producto';
+  $('#pEmoji').value=p?.emoji||''; $('#pNombre').value=p?.nombre||''; $('#pDesc').value=p?.descripcion||'';
+  $('#pCat').value=p?.categoria||'verduras'; $('#pActivo').checked=p?.activo!==false;
+  $('#imgUrl').value=p?.imagenUrl||'';
+  $('#imgPrev').innerHTML=p?.imagenUrl?`<img src="${imgSrc(p.imagenUrl)}" alt="" onerror="this.parentElement.textContent='📷 (todavía sin subir)'">`:(p?.emoji||'🥗');
+  renderOpts(p?.opciones?.length?p.opciones:[{etiqueta:'Kilo',precio:0,unidad:'kg'}]);
+  $('#pDelete').hidden=!p; $('#pErr').textContent='';
+  $('#pdlg').showModal();
+}
+$('#newProd').onclick=()=>openProd(null);
+$('#seedBtn').onclick=async()=>{
+  if(!FIREBASE_READY||!db)return toast('Conectá Firebase para poder guardar.');
+  if(!confirm('Esto va a crear '+DEFAULT_PRODUCTS.length+' productos de ejemplo. ¿Seguimos?'))return;
+  $('#seedBtn').disabled=true;
+  try{
+    const batch=db.batch();
+    DEFAULT_PRODUCTS.forEach((p,i)=>{const {id,...data}=p; batch.set(db.collection('productos').doc(id),Object.assign({activo:true,orden:i},data))});
+    await batch.commit();
+    toast('Catálogo de ejemplo cargado');
+  }catch(e){toast('No se pudo cargar el catálogo.')}
+  $('#seedBtn').disabled=false;
+};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]'); if(b)openProd(PRODUCTS.find(p=>p.id===b.dataset.edit))});
+$('#addOpt').onclick=()=>{const opts=readOptsFromForm();opts.push({etiqueta:'Unidad',precio:0,unidad:'u'});renderOpts(opts)};
+document.addEventListener('click',e=>{if(e.target.dataset.opDel!==undefined){const opts=readOptsFromForm();opts.splice(+e.target.dataset.opDel,1);renderOpts(opts.length?opts:[{etiqueta:'Kilo',precio:0,unidad:'kg'}])}});
+$('#pEmoji').addEventListener('input',()=>{if(!$('#imgUrl').value.trim())$('#imgPrev').textContent=$('#pEmoji').value||'🥗'});
+$('#imgUrl').addEventListener('input',()=>{const v=$('#imgUrl').value.trim();
+  $('#imgPrev').innerHTML=v?`<img src="${imgSrc(v)}" alt="" onerror="this.parentElement.textContent='📷 (todavía sin subir)'">`:($('#pEmoji').value||'🥗');});
+$('#pSave').onclick=async()=>{
+  const nombre=$('#pNombre').value.trim(), opciones=readOptsFromForm().filter(o=>o.etiqueta);
+  if(!nombre)return $('#pErr').textContent='Ponele un nombre al producto.';
+  if(!opciones.length||opciones.every(o=>!o.precio))return $('#pErr').textContent='Cargá al menos un precio.';
+  if(!FIREBASE_READY||!db)return $('#pErr').textContent='Conectá Firebase para poder guardar productos.';
+  $('#pErr').textContent='';
+  const id=editId||nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')+'-'+Date.now().toString(36);
+  try{
+    const imagenUrl=$('#imgUrl').value.trim();
+    const data={nombre,descripcion:$('#pDesc').value.trim(),categoria:$('#pCat').value,emoji:$('#pEmoji').value.trim()||'🥗',
+      imagenUrl:imagenUrl||'',opciones,activo:$('#pActivo').checked,orden:PRODUCTS.find(p=>p.id===id)?.orden??PRODUCTS.length};
+    await db.collection('productos').doc(id).set(data,{merge:true});
+    toast('Producto guardado'); $('#pdlg').close();
+  }catch(e){$('#pErr').textContent=e.message||'No se pudo guardar el producto.'}
+};
+$('#pDelete').onclick=async()=>{
+  if(!editId)return; if(!confirm('¿Eliminar este producto para siempre?'))return;
+  try{await db.collection('productos').doc(editId).delete(); toast('Producto eliminado'); $('#pdlg').close()}
+  catch(e){toast('No se pudo eliminar.')}
+};
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+document.addEventListener('click',e=>{const b=e.target.closest('[data-close]'); if(b)b.closest('dialog').close()});
+
+loadAll();
+</script>
+</body>
+</html>

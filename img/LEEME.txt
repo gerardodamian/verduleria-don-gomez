@@ -1,0 +1,18 @@
+Esta carpeta guarda las fotos de los productos.
+
+Cómo funciona:
+1. El dueño crea o edita un producto en admin.html y, en el campo de la foto,
+   escribe el nombre que va a tener el archivo (por ejemplo: tomate.jpg).
+2. Vos sacás o conseguís esa foto, la recortás cuadrada si hace falta, y la
+   guardás en esta carpeta "img" con EXACTAMENTE ese mismo nombre
+   (mayúsculas/minúsculas incluidas).
+3. La subís a GitHub (git add img/tomate.jpg, commit, push) como el resto
+   de los archivos del sitio.
+4. En cuanto GitHub Pages actualice, la foto aparece sola en la app — no
+   hace falta tocar nada más en Firestore ni en el panel.
+
+Mientras el archivo no exista, la app muestra el emoji del producto en su
+lugar, sin romperse.
+
+Sugerencia: fotos cuadradas (por ejemplo 600x600), formato .jpg o .webp,
+para que pesen poco y carguen rápido en el celular.
