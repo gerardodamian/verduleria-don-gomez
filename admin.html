@@ -34,6 +34,7 @@ section.card h2{font-family:var(--serif);color:var(--g);font-size:1.1rem;margin-
 .opcion{display:grid;grid-template-columns:1fr 90px 90px auto;gap:6px;align-items:center}
 .opcion select,.opcion input{padding:8px}
 .addop{justify-self:start;background:var(--bg);border:1px dashed var(--line);border-radius:10px;padding:6px 10px;font-size:.82rem;font-weight:700;color:var(--g)}
+.promoFields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .imgpick{display:flex;gap:10px;align-items:center}
 .imgpick .th{width:64px;height:64px;border-radius:12px;background:#eef4ea;overflow:hidden;display:grid;place-items:center;font-size:1.8rem}
 .imgpick .th img{width:100%;height:100%;object-fit:cover}
@@ -117,6 +118,14 @@ progress{width:100%}
     <fieldset class="opciones" id="pOpts"><legend>Presentaciones y precios</legend></fieldset>
     <button class="addop" id="addOpt" type="button">+ Agregar presentación</button>
     <label class="ship" style="margin-top:6px"><input type="checkbox" id="pActivo" checked><span><b>Visible en la app</b><br><small>Desmarcá para ocultarlo sin borrarlo</small></span></label>
+    <label class="ship"><input type="checkbox" id="pOferta"><span><b>🔥 Oferta de la semana</b><br><small>Aparece en la tira destacada debajo del encabezado</small></span></label>
+    <label class="f">Presentación de la oferta<select id="pOfertaOpcion"></select></label>
+    <label class="f" id="fPrecioAntes">Precio anterior (opcional, se muestra tachado)<input id="pPrecioAntes" type="number" min="0" step="10" placeholder="Ej: 3200"></label>
+    <div class="promoFields">
+      <label class="f">Cantidad del combo (kg)<input id="pOfertaCantidad" type="number" min="0.5" step="0.5" placeholder="Ej: 2"></label>
+      <label class="f">Precio del combo ($)<input id="pOfertaPrecio" type="number" min="0" step="10" placeholder="Ej: 3000"></label>
+    </div>
+    <p class="note">Elegí la presentación y completá cantidad y precio. Podés hacer combos por kilo o unidad; para una oferta de maple, elegí “Maple x30” y poné cantidad 1. El sobrante se cobra al precio normal.</p>
     <div class="err" id="pErr"></div>
     <div class="bar2">
       <button class="ibtn" id="pSave">Guardar producto</button>
@@ -215,7 +224,7 @@ function renderProducts(){
   $('#seedBtn').hidden=PRODUCTS.length>0; $('#seedNote').hidden=PRODUCTS.length>0;
   $('#plist').innerHTML=PRODUCTS.map(p=>`<div class="prow${p.activo===false?' inactivo':''}">
     <div class="th">${p.imagenUrl?`<img src="${imgSrc(p.imagenUrl)}" alt="" onerror="this.parentElement.textContent='${(p.emoji||'🥗').replace(/'/g,"\\'")}'">`:(p.emoji||'🥗')}</div>
-    <div class="pi"><b>${p.nombre||'(sin nombre)'}</b><span>${CAT_LABEL[p.categoria]||''} · ${(p.opciones||[]).map(o=>money(o.precio)+'/'+(o.unidad==='kg'?'kg':o.etiqueta.toLowerCase())).join(' · ')}</span></div>
+    <div class="pi"><b>${p.nombre||'(sin nombre)'}</b><span>${CAT_LABEL[p.categoria]||''} · ${(p.opciones||[]).map(o=>money(o.precio)+'/'+(o.unidad==='kg'?'kg':o.etiqueta.toLowerCase())).join(' · ')}${p.oferta&&p.ofertaCantidad&&p.ofertaPrecio?' · Oferta: '+p.ofertaCantidad+' × '+(p.opciones?.[p.ofertaOpcion||0]?.etiqueta||'presentación')+' por '+money(p.ofertaPrecio):''}</span></div>
     <div class="pa"><button class="iconbtn" data-edit="${p.id}" aria-label="Editar">✏️</button></div>
   </div>`).join('')||'<p class="note">Todavía no cargaste productos.</p>';
 }
@@ -270,6 +279,7 @@ function unitOptRow(o={etiqueta:'Kilo',precio:0,unidad:'kg'},i){
   </div>`;
 }
 function renderOpts(opts){$('#pOpts').innerHTML='<legend>Presentaciones y precios</legend>'+opts.map((o,i)=>unitOptRow(o,i)).join('')}
+function renderOfferOptions(opts,selected=0){$('#pOfertaOpcion').innerHTML=opts.map((o,i)=>`<option value="${i}" ${i===Number(selected)?'selected':''}>${o.etiqueta} · ${money(o.precio)}${o.unidad==='kg'?'/kg':''}</option>`).join('')}
 function readOptsFromForm(){
   const rows=[...document.querySelectorAll('#pOpts .opcion')];
   return rows.map(r=>{const i=r.dataset.i;
@@ -282,9 +292,12 @@ function openProd(p){
   $('#pdT').textContent=p?'Editar producto':'Nuevo producto';
   $('#pEmoji').value=p?.emoji||''; $('#pNombre').value=p?.nombre||''; $('#pDesc').value=p?.descripcion||'';
   $('#pCat').value=p?.categoria||'verduras'; $('#pActivo').checked=p?.activo!==false;
+  $('#pOferta').checked=!!p?.oferta; $('#pPrecioAntes').value=p?.precioAntes||'';
+  $('#pOfertaCantidad').value=p?.ofertaCantidad||''; $('#pOfertaPrecio').value=p?.ofertaPrecio||'';
   $('#imgUrl').value=p?.imagenUrl||'';
   $('#imgPrev').innerHTML=p?.imagenUrl?`<img src="${imgSrc(p.imagenUrl)}" alt="" onerror="this.parentElement.textContent='📷 (todavía sin subir)'">`:(p?.emoji||'🥗');
-  renderOpts(p?.opciones?.length?p.opciones:[{etiqueta:'Kilo',precio:0,unidad:'kg'}]);
+  const opciones=p?.opciones?.length?p.opciones:[{etiqueta:'Kilo',precio:0,unidad:'kg'}];
+  renderOpts(opciones); renderOfferOptions(opciones,p?.ofertaOpcion||0);
   $('#pDelete').hidden=!p; $('#pErr').textContent='';
   $('#pdlg').showModal();
 }
@@ -302,8 +315,8 @@ $('#seedBtn').onclick=async()=>{
   $('#seedBtn').disabled=false;
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-edit]'); if(b)openProd(PRODUCTS.find(p=>p.id===b.dataset.edit))});
-$('#addOpt').onclick=()=>{const opts=readOptsFromForm();opts.push({etiqueta:'Unidad',precio:0,unidad:'u'});renderOpts(opts)};
-document.addEventListener('click',e=>{if(e.target.dataset.opDel!==undefined){const opts=readOptsFromForm();opts.splice(+e.target.dataset.opDel,1);renderOpts(opts.length?opts:[{etiqueta:'Kilo',precio:0,unidad:'kg'}])}});
+$('#addOpt').onclick=()=>{const selected=$('#pOfertaOpcion').value,opts=readOptsFromForm();opts.push({etiqueta:'Unidad',precio:0,unidad:'u'});renderOpts(opts);renderOfferOptions(opts,selected)};
+document.addEventListener('click',e=>{if(e.target.dataset.opDel!==undefined){const selected=Number($('#pOfertaOpcion').value),opts=readOptsFromForm();opts.splice(+e.target.dataset.opDel,1);const next=opts.length?opts:[{etiqueta:'Kilo',precio:0,unidad:'kg'}];renderOpts(next);renderOfferOptions(next,Math.min(selected,next.length-1))}});
 $('#pEmoji').addEventListener('input',()=>{if(!$('#imgUrl').value.trim())$('#imgPrev').textContent=$('#pEmoji').value||'🥗'});
 $('#imgUrl').addEventListener('input',()=>{const v=$('#imgUrl').value.trim();
   $('#imgPrev').innerHTML=v?`<img src="${imgSrc(v)}" alt="" onerror="this.parentElement.textContent='📷 (todavía sin subir)'">`:($('#pEmoji').value||'🥗');});
@@ -311,13 +324,18 @@ $('#pSave').onclick=async()=>{
   const nombre=$('#pNombre').value.trim(), opciones=readOptsFromForm().filter(o=>o.etiqueta);
   if(!nombre)return $('#pErr').textContent='Ponele un nombre al producto.';
   if(!opciones.length||opciones.every(o=>!o.precio))return $('#pErr').textContent='Cargá al menos un precio.';
+  const ofertaCantidad=Number($('#pOfertaCantidad').value)||0, ofertaPrecio=Number($('#pOfertaPrecio').value)||0;
+  const ofertaOpcion=Number($('#pOfertaOpcion').value)||0;
+  if((ofertaCantidad||ofertaPrecio)&&(!ofertaCantidad||!ofertaPrecio))return $('#pErr').textContent='Completá cantidad y precio del combo.';
+  if(ofertaCantidad&&(opciones[ofertaOpcion]?.unidad==='kg'?(ofertaCantidad<0.5||!Number.isInteger(ofertaCantidad*2)):!Number.isInteger(ofertaCantidad)))return $('#pErr').textContent='Usá cantidades de medio kilo o cantidades enteras para unidades y presentaciones.';
   if(!FIREBASE_READY||!db)return $('#pErr').textContent='Conectá Firebase para poder guardar productos.';
   $('#pErr').textContent='';
   const id=editId||nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'')+'-'+Date.now().toString(36);
   try{
     const imagenUrl=$('#imgUrl').value.trim();
     const data={nombre,descripcion:$('#pDesc').value.trim(),categoria:$('#pCat').value,emoji:$('#pEmoji').value.trim()||'🥗',
-      imagenUrl:imagenUrl||'',opciones,activo:$('#pActivo').checked,orden:PRODUCTS.find(p=>p.id===id)?.orden??PRODUCTS.length};
+      imagenUrl:imagenUrl||'',opciones,activo:$('#pActivo').checked,oferta:$('#pOferta').checked,precioAntes:Number($('#pPrecioAntes').value)||0,
+      ofertaOpcion,ofertaCantidad,ofertaPrecio,orden:PRODUCTS.find(p=>p.id===id)?.orden??PRODUCTS.length};
     await db.collection('productos').doc(id).set(data,{merge:true});
     toast('Producto guardado'); $('#pdlg').close();
   }catch(e){$('#pErr').textContent=e.message||'No se pudo guardar el producto.'}
