@@ -306,7 +306,10 @@ function send(){
   const s=subtotal(),note=$('#fnote').value.trim();
   const msg=[`*Pedido para Don Gomez*`,`Cliente: ${name}`,'',...lines,'',`Productos: ${money(s)}`,`${e.t}: ${e.p?money(e.p):'Gratis'}`,`*Total: ${money(s+e.p)}*`,'',
     e.p?`Dirección: ${addr}`:`Retiro en ${CFG.dir}`,`Pago: ${$('#fp').value}`,note?`Nota: ${note}`:'',CFG.corteHora?cutoffLine():'','(Los productos por kilo pueden variar levemente de precio según el peso.)'].filter((x,i,a)=>x!==''||a[i-1]!=='').join('\n');
-  window.open(`https://wa.me/${CFG.tel}?text=${encodeURIComponent(msg)}`,'_blank','noopener');
+  const whatsapp=window.open(`https://wa.me/${CFG.tel}?text=${encodeURIComponent(msg)}`,'_blank');
+  if(!whatsapp){$('#err').textContent='No se pudo abrir WhatsApp. Permití las ventanas emergentes e intentá nuevamente.';return}
+  whatsapp.opener=null;
+  cart={};store.set('dg-cart',cart);draw();drawCart();$('#cart').close();
 }
 
 /* ====== Eventos ====== */
