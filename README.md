@@ -6,7 +6,7 @@ JavaScript puro, sin frameworks ni build tools, pensada para subir a GitHub Page
 
 - App para clientes: `index.html`
 - Panel del dueño (agregar productos, cambiar precios, envíos y horarios): `admin.html`
-- Teléfono del local: 3548 43-3620 · Av. España 580, La Falda
+- Teléfono y WhatsApp del local: 351 71-81975 · Av. España 580, La Falda
 
 ## Estructura del proyecto
 
@@ -95,7 +95,7 @@ Si se edita `index.html`, `admin.html` o `sw.js`, hay que subir la versión del
 service worker en `sw.js`:
 
 ```js
-const V='dongomez-v5', FILES=[...]
+const V='dongomez-v6', FILES=[...]
 ```
 
 Cambiarla (v6, v7, …) hace que los celulares que ya tienen la app instalada bajen la

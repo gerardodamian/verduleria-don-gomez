@@ -204,7 +204,7 @@ async function loadAll(){
   if(FIREBASE_READY&&db){
     try{
       const cdoc=await db.collection('config').doc('general').get();
-      if(cdoc.exists)CFG=Object.assign({},DEFAULT_CONFIG,cdoc.data());
+      if(cdoc.exists)CFG=Object.assign({},DEFAULT_CONFIG,cdoc.data(),{tel:DEFAULT_CONFIG.tel});
       else await db.collection('config').doc('general').set(DEFAULT_CONFIG);
     }catch(e){console.warn(e)}
     db.collection('productos').onSnapshot(snap=>{

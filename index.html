@@ -213,7 +213,7 @@ const fq=(q,u)=>u==='kg'?String(q).replace('.',',')+' kg':String(q);
 const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
 let cart=store.get('dg-cart',{}), sel={}, cat='todo', term='', ship=store.get('dg-ship','local');
 let PRODUCTS=store.get('dg-productos-cache',DEFAULT_PRODUCTS);
-let CFG=store.get('dg-config-cache',DEFAULT_CONFIG);
+let CFG=Object.assign({},DEFAULT_CONFIG,store.get('dg-config-cache',DEFAULT_CONFIG),{tel:DEFAULT_CONFIG.tel});
 const find=id=>PRODUCTS.find(p=>p.id===id);
 const key=(id,i)=>id+'|'+i;
 const stepOf=o=>o.u==='kg'?0.5:1;
@@ -342,7 +342,7 @@ function mapProduct(id,data){
     activo:data.activo!==false,orden:data.orden||0,oferta:!!data.oferta,precioAntes:Number(data.precioAntes)||0,
     ofertaOpcion:Number(data.ofertaOpcion)||0,ofertaCantidad:Number(data.ofertaCantidad)||0,ofertaPrecio:Number(data.ofertaPrecio)||0};
 }
-function mapConfig(data){return Object.assign({},DEFAULT_CONFIG,data)}
+function mapConfig(data){return Object.assign({},DEFAULT_CONFIG,data,{tel:DEFAULT_CONFIG.tel})}
 if(FIREBASE_READY&&db){
   db.collection('productos').onSnapshot(snap=>{
     const list=[]; snap.forEach(doc=>list.push(mapProduct(doc.id,doc.data())));
